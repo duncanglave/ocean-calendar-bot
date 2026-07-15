@@ -1,0 +1,26 @@
+name: Strong Coast Ocean Calendar Reminders
+
+on:
+  schedule:
+    # 12:00 UTC = 8:00am America/Toronto (EDT, UTC-4). Adjust if you want a
+    # different local time; GitHub Actions cron is always in UTC and does
+    # not shift for daylight saving.
+    - cron: "0 12 * * *"
+  workflow_dispatch: {}   # lets you manually trigger a run from the Actions tab, e.g. to test
+
+jobs:
+  check-and-notify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repo
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Run ocean calendar check and notify Slack
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+        run: python3 notify_slack.py
